@@ -10,7 +10,9 @@ import counter.items.Colour;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Comparator;
 
 public class App {
     public static void main(String[] argv) {
@@ -35,6 +37,29 @@ public class App {
 
         System.out.println("Lambda Exercise Output:");
         // Add your lambda exercises here
+        System.out.println(someApples);
+        List<Apple> someApplesAnonymous = someApples;
+        List<Apple> someApplesLambda = someApples;
+        Collections.sort(someApplesAnonymous , new Comparator<Apple>() {
+            public int compare(Apple apple1, Apple apple2) {
+                int bestBefore = apple1.bestBefore().compareTo(apple2.bestBefore());
+                return bestBefore;
+            }
+        });
+
+        //System.out.println(someApplesAnonymous);
+        someApplesAnonymous.forEach(apple-> System.out.println(apple));
+
+
+        //Collections.sort(events, (e1, e2) -> Long.compare(e1.timestamp, e2.timestamp));
+        //Collections.sort(someApplesLambda, (apple1, apple2) -> Long.compare(apple1.bestBefore(), apple2.bestBefore()));
+        Collections.sort(someApplesLambda, (apple1, apple2) -> apple1.bestBefore().compareTo(apple2.bestBefore()));
+
+        System.out.println("someApplesLambda:");
+        //System.out.println(someApplesLambda );
+        someApplesLambda.forEach(apple->{
+                    System.out.println(apple);
+                });
 
         System.out.println("Streams Exercises Output:");
         // Add your stream exercises here
