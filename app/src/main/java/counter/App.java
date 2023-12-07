@@ -9,10 +9,8 @@ import counter.items.Cart;
 import counter.items.Colour;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Comparator;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class App {
     public static void main(String[] argv) {
@@ -40,6 +38,7 @@ public class App {
         System.out.println(someApples);
         List<Apple> someApplesAnonymous = someApples;
         List<Apple> someApplesLambda = someApples;
+        List<Apple> someApplesPrintFct = someApples;
         Collections.sort(someApplesAnonymous , new Comparator<Apple>() {
             public int compare(Apple apple1, Apple apple2) {
                 int bestBefore = apple1.bestBefore().compareTo(apple2.bestBefore());
@@ -52,7 +51,6 @@ public class App {
 
 
         //Collections.sort(events, (e1, e2) -> Long.compare(e1.timestamp, e2.timestamp));
-        //Collections.sort(someApplesLambda, (apple1, apple2) -> Long.compare(apple1.bestBefore(), apple2.bestBefore()));
         Collections.sort(someApplesLambda, (apple1, apple2) -> apple1.bestBefore().compareTo(apple2.bestBefore()));
 
         System.out.println("someApplesLambda:");
@@ -61,8 +59,52 @@ public class App {
                     System.out.println(apple);
                 });
 
+
+        Comparator<Apple>[] comparators = new Comparator[3];
+        Comparator<Apple> comparatorDatePicked = (apple1, apple2) -> apple1.datePicked().compareTo(apple2.datePicked());
+        Comparator<Apple> comparatorBestBefore = (apple1, apple2) -> apple1.bestBefore().compareTo(apple2.bestBefore());
+        Comparator<Apple> comparatorColour = (apple1, apple2) -> apple1.colour().name().compareTo(apple2.colour().name());
+        comparators[0] = comparatorDatePicked;
+        comparators[1] = comparatorBestBefore;
+        comparators[2] = comparatorColour;
+        System.out.println("Test fct:");
+        printApples(someApplesPrintFct,comparators[1]);
+
         System.out.println("Streams Exercises Output:");
         // Add your stream exercises here
+        //List<Apple> someApplesBck= someApples;
+        //Stream<Apple> stream = Stream.of(someApplesBck);
+
+        someApples.stream().forEach(s -> System.out.println(s));
+        System.out.println("\n\n");
+        someApples.stream().skip(3).forEach(s -> System.out.println(s));
+
+        /*
+       someApples.stream()
+                .findFirst()
+               .isPresent(System.out::println); */
+
+       Optional<Apple> firstApple =  someApples.stream().findFirst();
+       if (firstApple.isPresent()) {
+           System.out.println(firstApple);
+       }
+       //
+        //stream.reduce((first, second) -> second);
+        //stream.forEach(s -> System.out.println(s));
+        someApples.stream()
+                .filter(apple -> apple.bestBefore()
+                .isBefore( LocalDate.of(2023, 5, 4)))
+                .forEach(s -> System.out.println(s));
+
+        someApples.stream()
+                .filter(apple -> apple.bestBefore()
+                        .isBefore( LocalDate.of(2023, 5, 4)))
+                .forEach(s -> System.out.println("There is a " + s.colour() + " apple that is best before " + s.bestBefore()));
+
+        someApples.stream()
+                .filter(apple -> apple.colour().equals(Colour.RED))
+                .forEach(s -> System.out.println("There is a " + s.colour() + " apple that is best before " + s.bestBefore()));
+
 
         System.out.println("Predicate Exercises Output:");
         Counter<Apple> appleCounter = new Counter<>();
@@ -81,4 +123,12 @@ public class App {
 
         System.out.println(anythingCounter.getCount()); // Should be 10 - sum of the above
     }
+
+    private static void printApples(List<Apple> apples,Comparator<Apple>  comparator ) {
+        Collections.sort(apples, comparator);
+        apples.forEach(apple->{
+            System.out.println(apple);
+        });
+    }
+
 }
