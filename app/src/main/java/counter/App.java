@@ -7,9 +7,12 @@ import counter.items.Apple;
 import counter.items.Box;
 import counter.items.Cart;
 import counter.items.Colour;
+import org.checkerframework.checker.units.qual.C;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class App {
@@ -96,20 +99,49 @@ public class App {
                 .isBefore( LocalDate.of(2023, 5, 4)))
                 .forEach(s -> System.out.println(s));
 
+       System.out.println("\n\n");
+
         someApples.stream()
                 .filter(apple -> apple.bestBefore()
                         .isBefore( LocalDate.of(2023, 5, 4)))
                 .forEach(s -> System.out.println("There is a " + s.colour() + " apple that is best before " + s.bestBefore()));
 
+        System.out.println("\n\n");
+
         someApples.stream()
                 .filter(apple -> apple.colour().equals(Colour.RED))
                 .forEach(s -> System.out.println("There is a " + s.colour() + " apple that is best before " + s.bestBefore()));
 
+        System.out.println("\n\n");
+
+        someApples.stream()
+                .sorted((apple1, apple2) -> apple1.datePicked().compareTo(apple2.datePicked()))
+                .skip(3)
+                .forEach(s -> System.out.println(s));
+
+        System.out.println("\n\n");
+
+        List<Apple> appleWithEE = someApples.stream()
+                .filter(apple -> apple.colour().name().contains("EE"))
+                .collect(Collectors.toList());
+
+        appleWithEE.stream().forEach(s -> System.out.println(s));
+
+        int numberApple = (int) someApples.stream()
+                .filter(apple -> apple.bestBefore()
+                        .isBefore( LocalDate.of(2023, 5, 4)))
+                .count();
+        System.out.println(numberApple);
 
         System.out.println("Predicate Exercises Output:");
         Counter<Apple> appleCounter = new Counter<>();
+        Counter<Apple> redCounter = new Counter<>();
         someApples.forEach(appleCounter::add);
-
+//        Predicate<Apple> thing = (apple) -> apple.colour().equals(Colour.RED);
+        someApples.forEach(apple -> redCounter.add(
+                apple,
+                (maybeRedApple) -> maybeRedApple.colour().equals(Colour.RED))
+        );
         System.out.println(appleCounter.getCount()); // Should be 8
 
         Counter<Cart<Apple>> cartCounter = new Counter<>();
